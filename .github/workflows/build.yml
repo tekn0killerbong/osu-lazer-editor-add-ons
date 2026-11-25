@@ -1,0 +1,41 @@
+name: Build and verify
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.x'
+      - name: Restore locked dependencies
+        run: dotnet restore EditorAddons.sln --locked-mode -m:1
+      - name: Build solution
+        run: dotnet build EditorAddons.sln -c Release --no-restore -m:1
+      - name: Check EditorAddons
+        run: dotnet run --project tests/EditorAddons.Tests -c Release --no-build
+      - name: Check curve conversion
+        run: dotnet run --project tests/EditorAddons.Tests -c Release --no-build -- --curve
+      - name: Check cold module discovery
+        run: python scripts/verify-discovery.py
+      - name: Package Windows distribution
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/build.ps1
+      - name: Package Linux distribution
+        if: runner.os == 'Linux'
+        run: bash scripts/build.sh
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: osu-editor-add-ons-${{ matrix.os }}
+          path: dist/
+          if-no-files-found: error

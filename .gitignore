@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+dist/
+artifacts/
+.vs/
+*.user
+*.suo
+*.log
+
+headless/
+*.dll
+*.pdb
+*.zip
+__pycache__/
+*.pyc
+.idea/
+.DS_Store
