@@ -1,4 +1,4 @@
-# tekno's osu-editor-add-ons
+# tekno's editor add ons for osu!lazer
 
 Optional editor tools for osu!lazer, by **tekno_killerbong**, Creator of [shred](https://github.com/tekn0killerbong/shred-osu-lazer). GitHub release tag: **v1.0**.
 
